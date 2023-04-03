@@ -1,19 +1,21 @@
 let currentMonth = 0;
 let clicked = null;
-let events = localStorage.getItem('events') ? JSON.parse(localStorage.getItem('events')) : [];
+let records = localStorage.getItem('records') ? JSON.parse(localStorage.getItem('records')) : [];
 
 const calendar = document.getElementById('calendar');
 const newLeaveEntry = document.getElementById('create-leave-entry');
 const deleteLeaveEntry = document.getElementById('delete-leave-entry')
 const leaveText = document.getElementById('leave-text');
 const backdrop = document.getElementById('backdrop');
+const hoursPerEntry = document.getElementById('hours-total');
+
 
 const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 function createLeaveEntry(date){
   clicked = date;
 
-  const leaveEntry = events.find(e => e.date === clicked);
+  const leaveEntry = records.find(e => e.date === clicked);
 
   if (leaveEntry) {
     document.getElementById('leave-text').innerText = leaveEntry.title;
@@ -90,17 +92,17 @@ function load() {
 
     if (i > paddingDays && i - paddingDays <= daysInMonth) {
       daySquare.innerText = i - paddingDays;
-      const eventForDay = events.find(e => e.date === dayString);
+      const leaveEntry = records.find(e => e.date === dayString);
 
       if (i - paddingDays === day && currentMonth === 0) {
         daySquare.id = 'currentDay';
       }
 
-      if (eventForDay) {
-        const eventDiv = document.createElement('div');
-        eventDiv.classList.add('event');
-        eventDiv.innerText = eventForDay.title;
-        daySquare.appendChild(eventDiv);
+      if (leaveEntry) {
+        const leaveDiv = document.createElement('div');
+        leaveDiv.classList.add('event');
+        leaveDiv.innerText = leaveEntry.title;
+        daySquare.appendChild(leaveDiv);
       }
 
       daySquare.addEventListener('click', () => createLeaveEntry(dayString));
@@ -126,22 +128,22 @@ function submitLeave(){
   if (leaveText.value) {
     leaveText.classList.remove('error');
 
-    events.push({
+    records.push({
       date: clicked,
       title: leaveText.value,
     });
 
-    localStorage.setItem('events', JSON.stringify(events));
-    closeModal();
+    localStorage.setItem('records', JSON.stringify(records));
+    cancelEntry();
   } else {
     leaveText.classList.add('error');
   }
 }
 
 function deleteLeave(){
-  events = events.filter(e => e.date !== clicked);
-  localStorage.setItem('events', JSON.stringify(events));
-  closeModal();
+  records = records.filter(e => e.date !== clicked);
+  localStorage.setItem('records', JSON.stringify(records));
+  cancelEntry();
 }
 
 function initButtons() {

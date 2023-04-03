@@ -189,3 +189,7 @@ select {
     position: absolute;
     background-color: rgba(0,0,0,0.8);
 }
+
+#hours-total.error {
+    border: 2px solid red;
+  }
